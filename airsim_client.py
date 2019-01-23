@@ -1,10 +1,5 @@
 
-import os
-import tempfile
-import pprint
-
 import airsim
-import numpy as np
 
 
 class AirsimClient:
@@ -26,6 +21,9 @@ class AirsimClient:
 
     def get_state(self):
         return self.client.getMultirotorState()
+
+    def get_collision_info(self):
+        return self.client.simGetCollisionInfo()
 
     def get_images(self, image_type=''):
         responses = self.client.simGetImages([
