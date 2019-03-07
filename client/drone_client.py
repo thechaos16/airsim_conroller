@@ -1,17 +1,16 @@
 
 import airsim
 
+from client.airsim_client import AirsimClient
 
-class AirsimClient:
-    def __init__(self, agent_type, interval=5):
-        if agent_type == 'drone':
-            self.client = airsim.MultirotorClient()
-            self.client.confirmConnection()
-            self.client.enableApiControl(True)
-            self.client.armDisarm(True)
-        else:
-            raise NotImplementedError()
-        self.interval = interval
+
+class DroneClient(AirsimClient):
+    def __init__(self, interval):
+        super(DroneClient, self).__init__(interval)
+        self.client = airsim.MultirotorClient()
+        self.client.confirmConnection()
+        self.client.enableApiControl(True)
+        self.client.armDisarm(True)
 
     def destroy(self):
         self.client.enableApiControl(False)
@@ -48,8 +47,3 @@ class AirsimClient:
 
     def _move_by_velocity(self, vx, vy, vz):
         self.client.moveByVelocityAsync(vx, vy, vz, self.interval).join()
-
-
-if __name__ == '__main__':
-    controller = AirsimClient('drone', 5)
-    controller.destroy()

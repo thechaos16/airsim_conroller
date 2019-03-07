@@ -3,7 +3,7 @@ import argparse
 
 import numpy as np
 
-from airsim_client import AirsimClient
+from client.drone_client import DroneClient
 
 
 def parse_state(state):
@@ -31,12 +31,12 @@ def get_gps_info(gps_val):
 
 if __name__ == '__main__':
     args = argparse.ArgumentParser()
-    args.add_argument('--iteration', default=5, type=int)
-    args.add_argument('--interval', default=5, type=int)
+    args.add_argument('--iteration', default=50, type=int)
+    args.add_argument('--interval', default=1, type=int)
     args.add_argument('--move-type', default='velocity', type=str)
     config = args.parse_args()
 
-    client = AirsimClient('drone', config.interval)
+    client = DroneClient(config.interval)
     client.start()
     states = [client.get_state()]
 
