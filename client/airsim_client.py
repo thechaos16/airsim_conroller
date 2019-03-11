@@ -1,6 +1,4 @@
 
-import airsim
-
 
 class AirsimClient:
     def __init__(self, interval=5):
