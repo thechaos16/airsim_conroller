@@ -19,5 +19,10 @@ def get_position(kinematic):
     return pos.x_val, pos.y_val, pos.z_val
 
 
+def get_velocity(kinematic):
+    vel = kinematic.linear_velocity
+    return vel.x_val, vel.y_val, vel.z_val
+
+
 def get_gps_info(gps_val):
     return gps_val.altitude, gps_val.latitude, gps_val.longitude

@@ -5,8 +5,8 @@ from client.airsim_client import AirsimClient
 
 
 class DroneClient(AirsimClient):
-    def __init__(self, interval):
-        super(DroneClient, self).__init__(interval)
+    def __init__(self, interval, root_path='./'):
+        super(DroneClient, self).__init__(interval, root_path)
         self.client = airsim.MultirotorClient()
         self.client.confirmConnection()
         self.client.enableApiControl(True)
@@ -24,13 +24,11 @@ class DroneClient(AirsimClient):
     def get_collision_info(self):
         return self.client.simGetCollisionInfo()
 
-    def get_images(self, image_type=''):
+    def get_images(self, camera_number='0'):
         responses = self.client.simGetImages([
-            airsim.ImageRequest('0', airsim.ImageType.DepthVis),  # depth visualization image
-            airsim.ImageRequest('1', airsim.ImageType.DepthPerspective, True),  # depth in perspective projection
-            airsim.ImageRequest('1', airsim.ImageType.Scene),  # scene vision image in png format
-            airsim.ImageRequest('1', airsim.ImageType.Scene, False, False)
-            # scene vision image in uncompressed RGBA array
+            airsim.ImageRequest(camera_number, airsim.ImageType.Scene, False, False),  # png
+            airsim.ImageRequest(camera_number, airsim.ImageType.DepthVis, True, False),  # depth visualization image
+            airsim.ImageRequest(camera_number, airsim.ImageType.DepthPerspective, True, False),  # depth in perspective projection
         ])
         return responses
 

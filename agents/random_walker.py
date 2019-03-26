@@ -23,6 +23,4 @@ class RandomWalker(Agent):
 
     def run(self, loop_cnt=100):
         for _ in range(loop_cnt):
-            cur_state = self.get_state()
             self.act()
-            print(cur_state)
