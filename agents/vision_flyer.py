@@ -1,10 +1,12 @@
 
+import time
 import os
-from PIL import Image
 
 import numpy as np
+from PIL import Image
 
 from agents.agent import Agent
+from airsim_utils import get_velocity, parse_state
 
 
 class VisionFlyer(Agent):
@@ -22,12 +24,17 @@ class VisionFlyer(Agent):
         self.client.save_image(path, image)
 
     def act(self):
-        target_vel = [
-            np.random.uniform(-1, 1),
-            np.random.uniform(-1, 1),
-            np.random.uniform(-1, 1)
+        # relative velocity
+        state = self.client.get_state()
+        _, kinematic, _ = parse_state(state)
+        velocity = get_velocity(kinematic)
+        # random move
+        velocity = [
+            velocity[0] + np.random.uniform(-0.5, 0.5),
+            velocity[1] + np.random.uniform(-0.5, 0.5),
+            velocity[2] + np.random.uniform(-0.5, 0.5)
         ]
-        self.client.move(self.move_type, *target_vel)
+        self.client.move(self.move_type, *velocity)
 
     def run(self, loop_cnt=100):
         for epoch in range(loop_cnt):
@@ -36,10 +43,14 @@ class VisionFlyer(Agent):
                 images = self.get_image(cam)
                 for idx, img in enumerate(images):
                     self._save_image(img, idx, self._get_repr(cam, epoch, idx))
+            time.sleep(0.1)
+            collision = self.client.get_collision_info()
+            if collision.has_collided:
+                print(collision)
 
     @staticmethod
     def _get_repr(camera, epoch, idx):
-        return '{}_{}_{}'.format(camera, epoch, idx)
+        return f'{camera}_{epoch}_{idx}'
 
     def _save_image(self, image, idx, name):
         height, width = image.height, image.width
@@ -52,4 +63,4 @@ class VisionFlyer(Agent):
             image = 255 / np.maximum(np.ones(image.size), image)
             image = np.reshape(image, (height, width))
             image = Image.fromarray(image).convert('L')
-        image.save(os.path.join(self.client.root_path, 'img_{}.png'.format(name)))
+        image.save(os.path.join(self.client.root_path, f'img_{name}.png'))
