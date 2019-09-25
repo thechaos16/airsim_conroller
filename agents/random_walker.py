@@ -2,6 +2,7 @@
 import numpy as np
 
 from agents.agent import Agent
+from airsim_utils import is_new_collision
 
 
 class RandomWalker(Agent):
@@ -24,3 +25,7 @@ class RandomWalker(Agent):
     def run(self, loop_cnt=100):
         for _ in range(loop_cnt):
             self.act()
+            collision = self.client.get_collision_info()
+            if is_new_collision(self.cur_collision, collision):
+                print(collision)
+                self.cur_collision = collision

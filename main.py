@@ -14,7 +14,7 @@ if __name__ == '__main__':
     config = args.parse_args()
 
     client = DroneClient(config.interval, root_path=config.save_path)
-    # agent = RandomWalker(client, config.move_type, (-2, 2))
-    agent = VisionFlyer(client, config.move_type)
+    agent = RandomWalker(client, config.move_type, (-2, 2))
+    # agent = VisionFlyer(client, config.move_type)
     agent.run(100)
     client.destroy()

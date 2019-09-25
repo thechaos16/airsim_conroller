@@ -6,7 +6,7 @@ import numpy as np
 from PIL import Image
 
 from agents.agent import Agent
-from airsim_utils import get_velocity, parse_state
+from airsim_utils import get_velocity, parse_state, is_new_collision
 
 
 class VisionFlyer(Agent):
@@ -45,8 +45,9 @@ class VisionFlyer(Agent):
                     self._save_image(img, idx, self._get_repr(cam, epoch, idx))
             time.sleep(0.1)
             collision = self.client.get_collision_info()
-            if collision.has_collided:
+            if is_new_collision(self.cur_collision, collision):
                 print(collision)
+                self.cur_collision = collision
 
     @staticmethod
     def _get_repr(camera, epoch, idx):
